@@ -1,23 +1,70 @@
-for (let i = 1; i <= 7; i++) {
-    console.log('*'.repeat(i))
+const list = [];
+const addButton = document.getElementById('button');
+const input = document.getElementById('input');
+
+function change(id) {
+    const item = list.findIndex((d) => {
+        if (d.id === id) {
+            return true;
+        }
+    })
+    const newText = prompt('Текст для изменения')
+    list[item].text = newText;
+    render()
 }
 
-fizzBuzz(150);
+function Deleted(id) {
+    const item = list.findIndex(d => d.id === id)
+    list.splice(item, 1)
+    render(list)
+}
 
-function fizzBuzz(num) {
-    for (let i = 1; i <= num; i++) {
-        if (i % 3 === 0 && i % 5 === 0) {
-            console.log('fizzbuzz');
+function render() {
+    const mainDiv = document.createElement('div');
+    mainDiv.setAttribute('class', 'list');
+
+    for (let i = 0; i < list.length; i++) {
+        const div = document.createElement('div');
+        div.setAttribute('class', 'todoBlock');
+        const p = document.createElement('p');
+        p.innerText = list[i].text
+        div.append(p);
+
+        const buttons = document.createElement('div');
+        buttons.setAttribute('class', 'actions');
+        const changeButton = document.createElement('button');
+        changeButton.setAttribute('class', 'change');
+        changeButton.onclick = () => {
+            change(list[i].id)
         }
-        else if (i % 3 === 0) {
-            console.log('fizz');
+        changeButton.innerText = "change";
+
+        const deleteButton = document.createElement('button');
+        deleteButton.setAttribute('class', 'delete');
+        deleteButton.onclick = () => {
+            Deleted(list[i].id).remove()
         }
-        else if (i % 5 === 0) {
-            console.log('buzz');
-        }
-        else {
-            console.log(i);
-        }
+        deleteButton.innerText = "delete";
+        buttons.append(changeButton, deleteButton);
+        div.append(buttons);
+        mainDiv.append(div);
     }
 
+    const form = document.querySelector('.form');
+    document.querySelector('.list').remove();
+    form.append(mainDiv);
 }
+
+addButton.addEventListener('click', function () {
+    const obj = {
+        id: list.length + 1,
+        text: input.value
+    }
+    if (input.value === '') {
+        return false
+    } else {
+        list.push(obj)
+        render()
+    }
+    input.value = '';
+})
